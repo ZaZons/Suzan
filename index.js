@@ -13,10 +13,17 @@ for	(const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-// Dizer q ta a funceminar
-client.once('ready', () => {
-	console.log('Ready!');
-});
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	}
+	else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
+}
 
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
@@ -35,6 +42,5 @@ client.on('interactionCreate', async interaction => {
 
 });
 
-// Login to discord with the token
 client.login(token);
 

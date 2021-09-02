@@ -1,10 +1,13 @@
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, token } = require('./config.json');
+const { token } = require('./config.json');
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+const clientId = '882567726810431489';
+const guildId = '683077979626405996';
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
@@ -15,6 +18,8 @@ const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
 	try {
+		console.log('Started refreshing application (/) commands.');
+
 		await rest.put(
 			Routes.applicationGuildCommands(clientId, guildId),
 			{ body: commands },
