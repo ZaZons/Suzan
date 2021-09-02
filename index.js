@@ -1,9 +1,17 @@
-// Require the discord.js library
-const { Client, Intents } = require ('discord.js');
+const fs = require('fs');
+const { Client, Collection, Intents } = require ('discord.js');
 const { token } = require('./config.json');
 
 // Create a new client instance
 const client = new Client ({ intents: [Intents.FLAGS.GUILDS] });
+
+client.commands = new Collection;
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for	(const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.data.name, command);
+}
 
 // Dizer q ta a funceminar
 client.once('ready', () => {
@@ -13,17 +21,18 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
-	const { commandName } = interaction;
+	const command = client.commands.get(interaction.commandName);
 
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
+	if (!command) return;
+
+	try {
+		await command.execute(interaction);
 	}
-	else if (commandName === 'server') {
-		await interaction.reply(`Server ID: ${interaction.guild.id}\nServer name: ${interaction.guild.name}\nAFK channel: ${interaction.guild.afkChannel}`);
+	catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 	}
-	else if (commandName === 'user') {
-		await interaction.reply(`Username: ${interaction.user.tag}\nUser ID: ${interaction.user.id}`);
-	}
+
 });
 
 // Login to discord with the token
