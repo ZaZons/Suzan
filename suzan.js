@@ -2,8 +2,10 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require ('discord.js');
 const { token } = require('./config.json');
 
+const myIntents = new Intents([Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MEMBERS]);
+
 // Create a new client instance
-const client = new Client ({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: myIntents });
 
 client.commands = new Collection;
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));

@@ -6,8 +6,10 @@ module.exports = {
 		.setName('ping')
 		.setDescription('Replies with pong'),
 	async execute(interaction) {
+		const user = interaction.user;
+		console.log(`${user.tag} just did a ping, let's pong the shit outta that ping`);
 		await interaction.deferReply();
-		await wait(200);
+		await wait(1000);
 		await interaction.editReply('pong');
 	},
 };

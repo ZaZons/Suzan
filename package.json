@@ -5,7 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
+    "@discordjs/opus": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/voice": "^0.6.0",
     "asynckit": "^0.4.0",
     "callsites": "^3.1.0",
     "combined-stream": "^1.0.8",
@@ -23,7 +25,8 @@
     "tslib": "^2.3.1",
     "type-fest": "^1.4.0",
     "vali-date": "^1.0.0",
-    "ws": "^7.5.4"
+    "ws": "^7.5.4",
+    "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
     "eslint": "^7.32.0"

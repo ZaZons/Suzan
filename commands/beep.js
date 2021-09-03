@@ -5,6 +5,8 @@ module.exports = {
 		.setName('beep')
 		.setDescription('Replies with boop'),
 	async execute(interaction) {
+		const user = interaction.user;
+		console.log(`${user.tag} just beeped, let's boop`);
 		await interaction.reply('boop');
 	},
 };
