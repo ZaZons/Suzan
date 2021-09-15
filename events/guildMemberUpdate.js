@@ -12,17 +12,14 @@ module.exports = {
 		const executor = updateLog.executor;
 		const oldUser = oldMember.user;
 		const newUser = newMember.user;
-		const nameEmbed = new MessageEmbed();
-		const nicknameEmbed = new MessageEmbed();
-		const rolesEmbed = new MessageEmbed();
-		const voiceEmbed = new MessageEmbed();
+		const embed = new MessageEmbed();
 		if (oldMember.nickname !== newMember.nickname) {
 			let oldNickname = oldMember.nickname;
 			let newNickname = newMember.nickname;
 			if (oldMember.nickname === null) oldNickname = `Nothing (${newUser.username})`;
 			if (newMember.nickname === null) newNickname = `Nothing (${oldUser.username})`;
-			nicknameEmbed.setColor('#00FFE9')
-				.setTitle('Member nickname changed')
+			embed.setColor('#00FFE9')
+				.setTitle('Member nickname updated')
 				.setThumbnail(newUser.avatarURL({ dynamic: true }))
 				.setDescription(`<@${newMember.id}>`)
 				.addFields(
@@ -32,44 +29,30 @@ module.exports = {
 				)
 				.setTimestamp()
 				.setFooter('made with 🖤 by Suzan');
-			if (logChannel) logChannel.send({ embeds: [nicknameEmbed] });
-		}
-		if (oldUser.username !== newUser.username) {
-			nameEmbed.setColor('#00FFE9')
-				.setTitle('Member username updated')
-				.setThumbnail(newMember.user.avatarURL({ dynamic: true }))
-				.setDescription(`<@${newMember.id}>`)
-				.addFields(
-					{ name: 'Old username', value: oldUser.username, inline: true },
-					{ name: 'New username', value: newUser.username, inline: true },
-				)
-				.setTimestamp()
-				.setFooter('made with 🖤 by Suzan');
-			if (logChannel) logChannel.send({ embeds: [nameEmbed] });
+			if (logChannel) logChannel.send({ embeds: [embed] });
+			console.log(`'${newUser.tag}' nickname changed from '${oldNickname}' to '${newNickname}' at '${guild.name}'`);
 		}
 		if (oldMember.roles !== newMember.roles) {
 			const removedRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
 			const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
-			rolesEmbed.setColor('#00FFE9')
+			embed.setColor('#00FFE9')
 				.setThumbnail(newMember.user.avatarURL({ dynamic: true }))
 				.setDescription(`<@${newMember.id}>`)
 				.setTimestamp()
 				.setFooter('made with 🖤 by Suzan');
 			if (removedRoles.size > 0) {
-				console.log(`The roles '${removedRoles.map(r => r.name)}' were removed from '${oldMember.displayName}' at '${guild.name}'`);
-				rolesEmbed.setTitle('Member roles removed')
+				embed.setTitle('Member roles removed')
 					.addField('Roles removed', `${removedRoles.map(r => r.name)}`);
+				console.log(`''${newMember.tag}' at '${guild.name}'`);
+				console.log(`The roles '${removedRoles.map(r => r.name)}' were removed from '${newMember.displayName}' at '${guild.name}'`);
+				if (logChannel) logChannel.send({ embeds: [embed] });
 			}
 			if (addedRoles.size > 0) {
-				console.log(`The roles '${addedRoles.map(r => r.name)}' were added to '${oldMember.displayName}' at '${guild.name}'`);
-				rolesEmbed.setTitle('Member roles added')
+				embed.setTitle('Member roles added')
 					.addField('Roles added', `${addedRoles.map(r => r.name)}`);
+				console.log(`The roles '${addedRoles.map(r => r.name)}' were added to '${newMember.displayName}' at '${guild.name}'`);
+				if (logChannel) logChannel.send({ embeds: [embed] });
 			}
-			if (logChannel) logChannel.send({ embeds: [rolesEmbed] });
 		}
-        if (oldMember.voice !== newMember.voice) {
-            console.log(oldMember.voice);
-            console.log(newMember.voice);
-        }
 	},
 };

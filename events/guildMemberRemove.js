@@ -27,10 +27,10 @@ module.exports = {
 		const totalMembers = guild.memberCount.toString();
 		let type;
 		if (user.bot === true) {
-			type = 'Beep boop (Bot)';
+			type = 'Bot';
 		}
 		else {
-			type = 'Hooman';
+			type = 'Human';
 		}
 		const goodbyeEmbed = new MessageEmbed()
 			.setColor('#00FFE9')
@@ -67,7 +67,7 @@ module.exports = {
 		}
 		if (kicked === 1) {
 			if (member.id === target.id) {
-				logEmbed.setTitle('User was kicked');
+				logEmbed.setTitle('User kicked');
 				logEmbed.addField('Kicked by', `<@${executor.id}>`, true);
 				console.log(`'${user.tag}' was kicked from '${guild.name}'`);
 				if (reason) {

@@ -8,6 +8,7 @@ module.exports = {
 		const guild = message.guild;
 		const channels = guild.channels.cache;
 		const logChannel = channels.find(c => c.topic === logChannelTopic);
+		if (message.channel === logChannel) return;
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MESSAGE_DELETE' });
 		const deleteLogs = fetchedLogs.entries.first();
 		if (!deleteLogs) return console.log('n encontramos nada nos logs lol');
@@ -19,7 +20,7 @@ module.exports = {
 			.setDescription(`<#${message.channelId}>`)
 			.setThumbnail(executor.avatarURL({ dynamic: true }))
 			.addFields(
-				{ name: 'Message author', value: `<@${target.id}>`, inline: true },
+				{ name: 'Message author', value: `<@${message.author.id}>`, inline: true },
 				{ name: 'Deleted by', value: `<@${executor.id}>`, inline: true },
 			)
 			.setTimestamp()

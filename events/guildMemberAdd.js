@@ -15,10 +15,10 @@ module.exports = {
 		const totalMembers = guild.memberCount.toString();
 		let type;
 		if (user.bot === true) {
-			type = 'Beep boop (Bot)';
+			type = 'Bot';
 		}
 		else {
-			type = 'Hooman';
+			type = 'Human';
 		}
 		const welcomeEmbed = new MessageEmbed()
 			.setColor('#00FFE9')

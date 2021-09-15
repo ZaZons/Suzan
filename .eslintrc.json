@@ -40,7 +40,7 @@
         ],
         "handle-callback-err": "off",
         "indent": [
-            "error",
+            "warn",
             "tab"
         ],
         "keyword-spacing": "error",

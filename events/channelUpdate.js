@@ -22,7 +22,7 @@ module.exports = {
 				.addFields(
 					{ name: 'Old name', value: oldChannel.name, inline: true },
 					{ name: 'New name', value: newChannel.name, inline: true },
-					{ name: 'Renamed by', value: `<@${executor}>` },
+					{ name: 'Renamed by', value: `<@${executor.id}>` },
 				)
 				.setTimestamp()
 				.setFooter('made with 🖤 by Suzan');
@@ -45,7 +45,7 @@ module.exports = {
 				.addFields(
 					{ name: 'Old description', value: oldChannel.topic, inline: true },
 					{ name: 'New description', value: newChannel.topic, inline: true },
-					{ name: 'Changed by', value: `<@${executor}>` },
+					{ name: 'Changed by', value: `<@${executor.id}>` },
 				)
 				.setTimestamp()
 				.setFooter('made with 🖤 by Suzan');
@@ -76,7 +76,7 @@ module.exports = {
 				.addFields(
 					{ name: 'Old NSFW status', value: nsfw, inline: true },
 					{ name: 'New NSFW status', value: nsfw1, inline: true },
-					{ name: 'Changed by', value: `<@${executor}>` },
+					{ name: 'Changed by', value: `<@${executor.id}>` },
 				)
 				.setTimestamp()
 				.setFooter('made with 🖤 by Suzan');
