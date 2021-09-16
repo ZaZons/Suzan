@@ -3,7 +3,8 @@ const { logChannelTopic } = require('../config.json');
 
 module.exports = {
 	name: 'guildBanAdd',
-	async execute(ban) {
+	async execute(ban)
+	{
 		const user = ban.user;
 		const guild = ban.guild;
 		const channels = guild.channels.cache;
@@ -14,18 +15,17 @@ module.exports = {
 		const reason = banLog.reason;
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
+			.setAuthor(executor.tag, executor.avatarURL())
 			.setTitle('User banned')
-			.setThumbnail(user.avatarURL({ DYNAMIC: true }))
 			.setDescription(`<@${user.id}>`)
-			.addField('Banned by', `<@${executor.id}>`, true)
-			.setTimestamp()
-			.setFooter('Made with 🖤 by Suzan');
-		if (reason) {
+			.setTimestamp();
+
+		if (reason)
+		{
 			embed.addField('Reason', reason, true);
 			console.log(`'${executor.tag}' banned '${user.tag}' from '${guild.name}' because '${reason}'`);
 		}
-		if (logChannel) {
-			await logChannel.send({ embeds: [embed] });
-		}
+
+		if (logChannel) await logChannel.send({ embeds: [embed] });
 	},
 };

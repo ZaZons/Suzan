@@ -3,7 +3,8 @@ const { logChannelTopic } = require('../config.json');
 
 module.exports = {
 	name: 'messageDelete',
-	async execute(message) {
+	async execute(message)
+	{
 		if (!message.guild) return;
 		const guild = message.guild;
 		const channels = guild.channels.cache;
@@ -11,26 +12,24 @@ module.exports = {
 		if (message.channel === logChannel) return;
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MESSAGE_DELETE' });
 		const deleteLogs = fetchedLogs.entries.first();
-		if (!deleteLogs) return console.log('n encontramos nada nos logs lol');
-		const executor = deleteLogs.executor;
-		const target = deleteLogs.target;
+		const { executor, target } = deleteLogs;
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
+			.setAuthor(executor.tag, executor.avatarURL())
 			.setTitle('Message deleted')
-			.setDescription(`<#${message.channelId}>`)
-			.setThumbnail(executor.avatarURL({ dynamic: true }))
 			.addFields(
-				{ name: 'Message author', value: `<@${message.author.id}>`, inline: true },
-				{ name: 'Deleted by', value: `<@${executor.id}>`, inline: true },
+				{ name: 'Channel', value: `<#${message.channelId}>`, inline: true },
+				{ name: 'Category', value: `${message.channel.parent.name}`, inline: true },
 			)
-			.setTimestamp()
-			.setFooter('made with 🖤 by Suzan');
-		if (!message.partial && message.content !== '') {
-			embed.addField('Message content', message.content);
+			.setTimestamp();
+
+		if (!message.partial && message.content !== '')
+		{
+			embed.setDescription(`'${message.content}'`)
+				.addField('Message Author', `<@${message.author.id}>`);
 		}
-		if (logChannel) {
-			await logChannel.send({ embeds: [embed] });
-		}
+
+		if (logChannel) await logChannel.send({ embeds: [embed] });
 		console.log(`'${executor.tag}' deleted a message from '${target.tag}' in '#${message.channel.name}>' at '${guild.name}'`);
 	},
 };

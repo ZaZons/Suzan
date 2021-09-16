@@ -3,7 +3,8 @@ const { logChannelTopic } = require('../config.json');
 
 module.exports = {
 	name: 'guildBanRemove',
-	async execute(ban) {
+	async execute(ban)
+	{
 		const user = ban.user;
 		const guild = ban.guild;
 		const channels = guild.channels.cache;
@@ -13,15 +14,12 @@ module.exports = {
 		const executor = banLog.executor;
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
+			.setAuthor(executor.tag, executor.avatarURL())
 			.setTitle('User unbanned')
-			.setThumbnail(user.avatarURL({ DYNAMIC: true }))
 			.setDescription(`<@${user.id}>`)
-			.addField('Unbanned by', `<@${executor.id}>`, true)
-			.setTimestamp()
-			.setFooter('Made with 🖤 by Suzan');
+			.setTimestamp();
+
 		console.log(`'${executor.tag}' unbanned '${user.tag}' from '${guild.name}'`);
-		if (logChannel) {
-			await logChannel.send({ embeds: [embed] });
-		}
+		if (logChannel) await logChannel.send({ embeds: [embed] });
 	},
 };

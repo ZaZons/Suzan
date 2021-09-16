@@ -3,7 +3,8 @@ const { logChannelTopic } = require('../config.json');
 
 module.exports = {
 	name: 'channelUpdate',
-	async execute(oldChannel, newChannel) {
+	async execute(oldChannel, newChannel)
+	{
 		if (!newChannel.guild) return;
 		const guild = newChannel.guild;
 		const channels = guild.channels.cache;
@@ -11,79 +12,79 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_UPDATE' });
 		const updateLog = fetchedLogs.entries.first();
 		const executor = updateLog.executor;
-		const nameEmbed = new MessageEmbed();
-		const topicEmbed = new MessageEmbed();
-		const nsfwEmbed = new MessageEmbed();
-		if (oldChannel.name !== newChannel.name) {
-			nameEmbed.setColor('#00FFE9')
-				.setTitle('Channel name updated')
-				.setThumbnail(executor.avatarURL({ dynamic: true }))
-				.setDescription(`<#${newChannel.id}>`)
-				.addFields(
-					{ name: 'Old name', value: oldChannel.name, inline: true },
-					{ name: 'New name', value: newChannel.name, inline: true },
-					{ name: 'Renamed by', value: `<@${executor.id}>` },
+		const embed = new MessageEmbed()
+			.setColor('#00FFE9')
+			.setAuthor(executor.tag, executor.avatarURL())
+			.addFields(
+				{ name: 'Channel', value: `<#${newChannel.id}>`, inline: true },
+				{ name: 'Category', value: `${newChannel.parent.name}`, inline: true },
 				)
-				.setTimestamp()
-				.setFooter('made with 🖤 by Suzan');
-			if (logChannel) {
-				await logChannel.send({ embeds: [nameEmbed] });
-				console.log(`'${executor.tag}' renamed the channel '${newChannel.name}' at '${guild.name}'`);
-			}
+			.setTimestamp();
+
+		if (oldChannel.name !== newChannel.name)
+		{
+			embed.setTitle('Channel name updated')
+				.setDescription(`${oldChannel.name} ► ${newChannel.name}`);
+
+			if (logChannel) await logChannel.send({ embeds: [embed] });
+			console.log(`'${executor.tag}' renamed the channel '${newChannel.name}' at '${guild.name}'`);
 		}
-		if (oldChannel.topic !== newChannel.topic) {
-			if (oldChannel.topic === null) {
+
+		if (oldChannel.parent !== newChannel.parent)
+		{
+			embed.setTitle('Channel category updated')
+				.setDescription(`${oldChannel.parent.name} ► ${newChannel.parent.name}`);
+
+			if (logChannel) await logChannel.send({ embeds: [embed] });
+			console.log(`'${executor.tag}' chaged the channel '${newChannel.name}' category at '${guild.name}'`);
+		}
+
+		if (oldChannel.topic !== newChannel.topic)
+		{
+			if (oldChannel.topic === null)
+			{
 				oldChannel.topic = 'Nothing';
 			}
-			if (newChannel.topic === null) {
+
+			if (newChannel.topic === null)
+			{
 				newChannel.topic = 'Nothing';
 			}
-			topicEmbed.setColor('#00FFE9')
-				.setTitle('Channel description updated')
-				.setThumbnail(executor.avatarURL({ dynamic: true }))
-				.setDescription(`<#${newChannel.id}>`)
-				.addFields(
-					{ name: 'Old description', value: oldChannel.topic, inline: true },
-					{ name: 'New description', value: newChannel.topic, inline: true },
-					{ name: 'Changed by', value: `<@${executor.id}>` },
-				)
-				.setTimestamp()
-				.setFooter('made with 🖤 by Suzan');
-			if (logChannel) {
-				await logChannel.send({ embeds: [topicEmbed] });
-				console.log(`'${executor.tag}' changed '${newChannel.name}' description at '${guild.name}'`);
-			}
+
+			embed.setTitle('Channel description updated')
+				.setDescription(`${oldChannel.topic} ► ${newChannel.topic}`);
+
+			if (logChannel) await logChannel.send({ embeds: [embed] });
+			console.log(`'${executor.tag}' changed '${newChannel.name}' description at '${guild.name}'`);
 		}
-		if (oldChannel.nsfw !== newChannel.nsfw) {
+
+		if (oldChannel.nsfw !== newChannel.nsfw)
+		{
 			let nsfw;
 			let nsfw1;
-			if (oldChannel.nsfw) {
+			if (oldChannel.nsfw)
+			{
 				nsfw = 'NSFW';
 			}
-			else {
+			else
+			{
 				nsfw = 'SFW';
 			}
-			if (newChannel.nsfw) {
+
+			if (newChannel.nsfw)
+			{
 				nsfw1 = 'NSFW';
 			}
-			else {
+			else
+			{
 				nsfw1 = 'SFW';
 			}
-			nsfwEmbed.setColor('#00FFE9')
-				.setTitle('Channel NSFW status updated')
-				.setThumbnail(executor.avatarURL({ dynamic: true }))
-				.setDescription(`<#${newChannel.id}>`)
-				.addFields(
-					{ name: 'Old NSFW status', value: nsfw, inline: true },
-					{ name: 'New NSFW status', value: nsfw1, inline: true },
-					{ name: 'Changed by', value: `<@${executor.id}>` },
-				)
-				.setTimestamp()
-				.setFooter('made with 🖤 by Suzan');
-			if (logChannel) {
-				await logChannel.send({ embeds: [nsfwEmbed] });
-				console.log(`'${executor.tag}' changed '${newChannel.name}' NSFW status at '${guild.name}'`);
-			}
+
+			embed.setTitle('Channel NSFW status updated')
+				.setDescription(`${nsfw} ► ${nsfw1}`);
+
+			if (logChannel) await logChannel.send({ embeds: [embed] });
+			console.log(`'${executor.tag}' changed '${newChannel.name}' NSFW status at '${guild.name}'`);
 		}
 	},
 };

@@ -3,7 +3,8 @@ const { logChannelTopic } = require('../config.json');
 
 module.exports = {
 	name: 'roleDelete',
-	async execute(role) {
+	async execute(role)
+	{
 		if (!role.guild) return;
 		const guild = role.guild;
 		const channels = guild.channels.cache;
@@ -13,15 +14,11 @@ module.exports = {
 		const executor = createLog.executor;
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
+			.setAuthor(executor.tag, executor.avatarURL())
 			.setTitle('Role deleted')
-			.setThumbnail(executor.avatarURL({ dynamic: true }))
 			.setDescription(`${role.name}`)
-			.addFields(
-				{ name: 'Role ID', value: role.id, inline: true },
-				{ name: 'Deleted by', value: `<@${executor.id}>`, inline: true },
-			)
-			.setTimestamp()
-			.setFooter('made with 🖤 by Suzan');
+			.setTimestamp();
+
 		if (logChannel) logChannel.send({ embeds: [embed] });
 		console.log(`'${executor.tag}' deleted the role '${role.name}' at '${guild.name}'`);
 	},
