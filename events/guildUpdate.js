@@ -11,6 +11,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'GUILD_UPDATE' });
 		const updateLog = fetchedLogs.entries.first();
 		const executor = updateLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())

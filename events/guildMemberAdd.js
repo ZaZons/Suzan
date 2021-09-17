@@ -14,16 +14,7 @@ module.exports = {
 		const createdAt = user.createdAt.toString();
 		const userCreated = createdAt.slice(4, 15);
 		const totalMembers = guild.memberCount.toString();
-		let type;
-
-		if (user.bot === true)
-		{
-			type = 'Bot';
-		}
-		else
-		{
-			type = 'Human';
-		}
+		const type = user.bot ? 'Bot' : 'Human';
 
 		const welcomeEmbed = new MessageEmbed()
 			.setColor('#00FFE9')
@@ -53,16 +44,8 @@ module.exports = {
 			)
 			.setTimestamp();
 
-		if (welcomeChannel)
-		{
-			await welcomeChannel.send({ embeds: [welcomeEmbed] });
-		}
-
-		if (logChannel)
-		{
-			await logChannel.send({ embeds: [logEmbed] });
-		}
-
+		if (welcomeChannel) await welcomeChannel.send({ embeds: [welcomeEmbed] });
+		if (logChannel) await logChannel.send({ embeds: [logEmbed] });
 		console.log(`'${member.user.tag}' is super cool and joined '${guild.name}'`);
 	},
 };

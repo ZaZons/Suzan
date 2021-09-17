@@ -13,6 +13,7 @@ module.exports = {
 		const banLog = fetchedLogs.entries.first();
 		const executor = banLog.executor;
 		const reason = banLog.reason;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())

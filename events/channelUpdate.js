@@ -12,6 +12,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_UPDATE' });
 		const updateLog = fetchedLogs.entries.first();
 		const executor = updateLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())
@@ -41,15 +42,8 @@ module.exports = {
 
 		if (oldChannel.topic !== newChannel.topic)
 		{
-			if (oldChannel.topic === null)
-			{
-				oldChannel.topic = 'Nothing';
-			}
-
-			if (newChannel.topic === null)
-			{
-				newChannel.topic = 'Nothing';
-			}
+			if (oldChannel.topic === null) oldChannel.topic = 'Nothing';
+			if (newChannel.topic === null) newChannel.topic = 'Nothing';
 
 			embed.setTitle('Channel description updated')
 				.setDescription(`${oldChannel.topic} ► ${newChannel.topic}`);
@@ -60,28 +54,11 @@ module.exports = {
 
 		if (oldChannel.nsfw !== newChannel.nsfw)
 		{
-			let nsfw;
-			let nsfw1;
-			if (oldChannel.nsfw)
-			{
-				nsfw = 'NSFW';
-			}
-			else
-			{
-				nsfw = 'SFW';
-			}
-
-			if (newChannel.nsfw)
-			{
-				nsfw1 = 'NSFW';
-			}
-			else
-			{
-				nsfw1 = 'SFW';
-			}
+			const oldNSFW = oldChannel.nsfw ? 'NSFW' : 'SFW';
+			const newNSFW = newChannel.nsfw ? 'NSFW' : 'SFW';
 
 			embed.setTitle('Channel NSFW status updated')
-				.setDescription(`${nsfw} ► ${nsfw1}`);
+				.setDescription(`${oldNSFW} ► ${newNSFW}`);
 
 			if (logChannel) await logChannel.send({ embeds: [embed] });
 			console.log(`'${executor.tag}' changed '${newChannel.name}' NSFW status at '${guild.name}'`);

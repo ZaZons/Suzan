@@ -12,7 +12,7 @@ module.exports = {
 		if (message.channel === logChannel) return;
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MESSAGE_DELETE' });
 		const deleteLogs = fetchedLogs.entries.first();
-		const { executor, target } = deleteLogs;
+		const { executor } = deleteLogs;
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())
@@ -30,6 +30,6 @@ module.exports = {
 		}
 
 		if (logChannel) await logChannel.send({ embeds: [embed] });
-		console.log(`'${executor.tag}' deleted a message from '${target.tag}' in '#${message.channel.name}>' at '${guild.name}'`);
+		console.log(`'${executor.tag}' deleted a message in '#${message.channel.name}' at '${guild.name}'`);
 	},
 };

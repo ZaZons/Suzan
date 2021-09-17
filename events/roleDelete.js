@@ -12,6 +12,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'ROLE_DELETE' });
 		const createLog = fetchedLogs.entries.first();
 		const executor = createLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())

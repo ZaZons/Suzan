@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 const { MessageEmbed } = require('discord.js');
 const { logChannelTopic } = require('../config.json');
 
@@ -37,5 +36,10 @@ module.exports = {
             console.log(`'${executor.tag}' chenged the role '${newRole.name}' 
             color at '${guild.name}'`);
         }
+/*
+        if (oldRole.permissions !== newRole.permissions)
+        {
+            console.log('permissions changed');
+        }*/
     },
 };

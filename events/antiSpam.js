@@ -1,14 +1,15 @@
 const usersMap = new Map();
 const { mutedRole } = require('../config.json');
-const { logChannelTopic } = require('../config.json');
 
 module.exports = {
     name: 'messageCreate',
     async execute(message)
     {
+        if (!message.guild) return;
         if (message.author.bot) return;
-        const role = message.guild.roles.cache.find(c => c.name === mutedRole);
-        if (!role) return;
+
+        const muteRole = message.guild.roles.cache.find(r => r.name === mutedRole);
+        if (!muteRole) return;
         const limit = 5;
         const diff = 2000;
         const time = 5000;
@@ -36,9 +37,9 @@ module.exports = {
                 msgCount++;
                 if (msgCount === limit)
                 {
-                    message.member.roles.add(role);
+                    message.member.roles.add(muteRole);
                     message.channel.send('You cannot spam in this chat');
-                    message.channel.bulkDelete(limit);
+                    message.channel.bulkDelete(msgCount);
                 }
                 else
                 {
@@ -49,7 +50,7 @@ module.exports = {
         }
         else
         {
-            let fn = setTimeout(() => {
+            const fn = setTimeout(() => {
                 usersMap.delete(message.author.id);
             }, time);
 

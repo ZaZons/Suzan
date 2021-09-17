@@ -12,6 +12,7 @@ module.exports = {
 		const AuditLogFetch = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_DELETE' });
 		const createdLog = AuditLogFetch.entries.first();
 		const deleter = createdLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(deleter.tag, deleter.avatarURL())

@@ -21,12 +21,9 @@ module.exports = {
 		const totalMembers = guild.memberCount.toString();
 		let kicked = 0;
 
-		if (kickLog)
+		if (kickLog && target.id === member.id)
 		{
-			if (target.id === member.id)
-			{
-				kicked = 1;
-			}
+			kicked = 1;
 		}
 
 		const goodbyeEmbed = new MessageEmbed()
@@ -57,21 +54,18 @@ module.exports = {
 
 		if (kicked === 1)
 		{
-			if (member.id === target.id)
+			logEmbed.setTitle('User kicked');
+
+			console.log(`'${user.tag}' was kicked from '${guild.name}'`);
+
+			if (reason)
 			{
-				logEmbed.setTitle('User kicked');
-
+				logEmbed.addField('Reason', reason, true);
+				console.log(`'${executor.tag}' kicked '${user.tag}' from '${guild.name}' because '${reason}'`);
+			}
+			else
+			{
 				console.log(`'${user.tag}' was kicked from '${guild.name}'`);
-
-				if (reason)
-				{
-					logEmbed.addField('Reason', reason, true);
-					console.log(`'${executor.tag}' kicked '${user.tag}' from '${guild.name}' because '${reason}'`);
-				}
-				else
-				{
-					console.log(`'${user.tag}' was kicked from '${guild.name}'`);
-				}
 			}
 		}
 

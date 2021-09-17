@@ -12,6 +12,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MEMBER_BAN_REMOVE' });
 		const banLog = fetchedLogs.entries.first();
 		const executor = banLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())

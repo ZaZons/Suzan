@@ -13,6 +13,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MESSAGE_BULK_DELETE' });
 		const deleteLogs = fetchedLogs.entries.first();
 		const executor = deleteLogs.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(executor.tag, executor.avatarURL())
@@ -26,6 +27,7 @@ module.exports = {
 					.setLabel('Full log')
 					.setStyle('LINK'),
 			);
+
 		console.log(`'${executor.tag}' bulk deleted from '${guild.name}'`);
 		if (logChannel) await logChannel.send({ embeds: [embed], components: [button] });
 	},

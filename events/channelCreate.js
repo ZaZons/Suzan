@@ -12,6 +12,7 @@ module.exports = {
 		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_CREATE' });
 		const createdLog = fetchedLogs.entries.first();
 		const creator = createdLog.executor;
+
 		const embed = new MessageEmbed()
 			.setColor('#00FFE9')
 			.setAuthor(creator.tag, creator.avatarURL())
