@@ -1,27 +1,41 @@
+require('dotenv').config();
 const { MessageEmbed } = require('discord.js');
-const { logChannelTopic } = require('../config.json');
+const findLog = require('../database/findLog.js');
 
 module.exports = {
 	name: 'channelDelete',
-	async execute(channel)
-	{
-		if (!channel.guild) return;
-		const guild = channel.guild;
-		const channels = guild.channels.cache;
-		const logChannel = channels.find(c => c.topic === logChannelTopic);
-		const AuditLogFetch = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_DELETE' });
-		const createdLog = AuditLogFetch.entries.first();
-		const deleter = createdLog.executor;
+	async execute(channel) {
+		try {
+			if (!channel.guild) return;
+			const logType = 'channelLog';
+			const guild = channel.guild;
+			const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'CHANNEL_DELETE' });
+			const deleter = fetchedLogs.entries.first().executor;
+			//const deleter = createdLog.executor;
 
-		const embed = new MessageEmbed()
-			.setColor('#00FFE9')
-			.setAuthor(deleter.tag, deleter.avatarURL())
-			.setTitle('Channel deleted')
-			.setDescription(`#${channel.id}`)
-			.addField('Channel category', channel.parent.name)
-			.setTimestamp();
+			const embed = new MessageEmbed()
+				.setColor(process.env.color)
+				.setTitle('Channel deleted')
+				.setThumbnail(deleter.avatarURL({ dynamic: true }))
+				.setDescription(`#${channel.name}`)
+				.setFields(
+					{ name: 'Channel category', value: `<#${channel.parentId}>`, inline: true },
+					{ name: 'Deleted by', value: `<@${deleter.id}>`, inline: true },
+				)
+				.setTimestamp()
+				.setFooter('made with 🖤 by Suzan');
 
-		if (logChannel) await logChannel.send({ embeds: [embed] });
-		console.log(`Channel '#${channel.name}' was deleted at '${guild.name}' by '${deleter.tag}'.`);
+			console.log(`Channel '#${channel.name}' was deleted at '${guild.name}' by '${deleter.tag}'.`);
+
+			const channelLog = await findLog.findLog(guild, logType);
+			if (channelLog) {
+				await channelLog.send({ embeds: [embed] });
+			} else {
+				const generalLog = await findLog.findLog(guild, 'generalLog');
+				if (generalLog) await generalLog.send({ embeds: [embed] });
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	},
 };

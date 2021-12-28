@@ -1,75 +1,71 @@
+require('dotenv').config();
 const { MessageEmbed } = require('discord.js');
-const { logChannelTopic } = require('../config.json');
-const { goodbyeChannelTopic } = require('../config.json');
-const { clientId } = require('../config.json');
+const findLog = require('../database/findLog.js');
 
 module.exports = {
 	name: 'guildMemberRemove',
-	async execute(member)
-	{
-		if (member.id === clientId) return;
-		const guild = member.guild;
-		const channels = guild.channels.cache;
-		const logChannel = channels.find(c => c.topic === logChannelTopic);
-		const goodbyeChannel = channels.find(c => c.topic === goodbyeChannelTopic);
-		const fetchedLogs = await guild.fetchAuditLogs({ limit: 1, type: 'MEMBER_KICK' });
-		const kickLog = fetchedLogs.entries.first();
-		const { executor, target, reason } = kickLog;
-		const user = member.user;
-		const createdAt = user.createdAt.toString();
-		const userCreated = createdAt.slice(4, 15);
-		const totalMembers = guild.memberCount.toString();
-		let kicked = 0;
+	async execute(member) {
+		try {
+			const user = member.user;
+			const createdAt = user.createdAt.toString();
+			const userCreated = createdAt.slice(4, 15);
+			const totalMembers = member.guild.memberCount.toString();
+			const type = user.bot ? 'Bot' : 'Human';
 
-		if (kickLog && target.id === member.id)
-		{
-			kicked = 1;
-		}
+			let goodbyeChannel;
+			const connection = await require('../database/db.js');
+			const sql = `SELECT goodbyeChannel FROM guilds WHERE id = '${member.guild.id}'`
+			await connection.query(sql).then(result => {
+				if (result[0][0]) goodbyeChannel = member.guild.channels.cache.find(c => c.id === result[0][0].goodbyeChannel);
+			}).catch(console.log);
 
-		const goodbyeEmbed = new MessageEmbed()
-			.setColor('#00FFE9')
-			.setAuthor(user.tag, user.avatarURL())
-			.setTitle('Catcha later mate')
-			.addFields(
-				{ name: 'Username', value: user.tag, inline: true },
-				{ name: 'User ID', value: user.id, inline: true },
-				{ name: '\u200b', value: '\u200b', inline: true },
-				{ name: 'Joined Discord at', value: userCreated, inline: true },
-				{ name: 'Total members', value: totalMembers, inline: true },
-			)
-			.setTimestamp();
+			if (goodbyeChannel) {
+				const goodbyeEmbed = new MessageEmbed()
+					.setColor(process.env.color)
+					.setTitle('Catcha later mate')
+					.setThumbnail(user.avatarURL({ dynamic: true }))
+					.setDescription(`<@${user.id}>`)
+					.addFields(
+						{ name: 'Username', value: user.tag, inline: true },
+						{ name: 'User ID', value: user.id, inline: true },
+						{ name: '\u200b', value: '\u200b', inline: true },
+						{ name: 'Joined Discord at', value: userCreated, inline: true },
+						{ name: 'Total members', value: totalMembers, inline: true },
+					)
+					.setTimestamp()
+					.setFooter('Made with 🖤 by Suzan');
 
-		const logEmbed = new MessageEmbed()
-			.setColor('#00FFE9')
-			.setAuthor(executor.tag, executor.avatarURL())
-			.setTitle('User banned')
-			.setDescription(`<@${user.id}>`)
-			.setTimestamp();
-
-		if (kicked === 0)
-		{
-			logEmbed.setTitle('User left');
-			console.log(`'${user.tag}' left '${guild.name}'`);
-		}
-
-		if (kicked === 1)
-		{
-			logEmbed.setTitle('User kicked');
-
-			console.log(`'${user.tag}' was kicked from '${guild.name}'`);
-
-			if (reason)
-			{
-				logEmbed.addField('Reason', reason, true);
-				console.log(`'${executor.tag}' kicked '${user.tag}' from '${guild.name}' because '${reason}'`);
+				await goodbyeChannel.send({ embeds: [goodbyeEmbed] });
 			}
-			else
-			{
-				console.log(`'${user.tag}' was kicked from '${guild.name}'`);
-			}
-		}
 
-		if (goodbyeChannel) await goodbyeChannel.send({ embeds: [goodbyeEmbed] });
-		if (logChannel) await logChannel.send({ embeds: [logEmbed] });
+			const logEmbed = new MessageEmbed()
+				.setColor(process.env.color)
+				.setTitle('User left')
+				.setThumbnail(user.avatarURL({ dynamic: true }))
+				.setDescription(`<@${user.id}>`)
+				.addFields(
+					{ name: 'Username', value: user.tag, inline: true },
+					{ name: 'User ID', value: user.id, inline: true },
+					{ name: '\u200b', value: '\u200b', inline: true },
+					{ name: 'Joined Discord at', value: userCreated, inline: true },
+					{ name: 'Type', value: type, inline: true },
+					{ name: 'Total members', value: totalMembers, inline: true },
+				)
+				.setTimestamp()
+				.setFooter('made with 🖤 by Suzan');
+
+			const logType = 'memberLog';
+			const channelLog = await findLog.findLog(member.guild, logType);
+			if (channelLog) {
+				await channelLog.send({ embeds: [logEmbed] });
+			} else {
+				const generalLog = await findLog.findLog(member.guild, 'generalLog');
+				if (generalLog) await generalLog.send({ embeds: [logEmbed] });
+			}
+
+			console.log(`'${member.user.tag}' left '${member.guild.name}'`);
+		} catch (error) {
+			console.log(error);
+		}
 	},
 };
